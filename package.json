@@ -1,0 +1,9 @@
+{
+  "name": "gift-recommender",
+  "version": "1.0.0",
+  "private": true,
+  "description": "GiftMuse AI 礼物推荐应用",
+  "scripts": {
+    "start": "node server.js"
+  }
+}

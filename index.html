@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="AI 礼物推荐顾问 — 根据对象个性、场景和偏好，智能生成专属礼物方案。" />
+  <title>GiftMuse · AI 礼物推荐</title>
+
+  <!-- Google Fonts: 与 PingFang SC 混搭 -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+
+  <link rel="stylesheet" href="styles.css" />
+</head>
+
+<body>
+
+  <!-- Toast 通知容器 -->
+  <div class="toast-container" id="toast-container"></div>
+
+  <div class="app-wrapper">
+
+    <!-- ===== 顶部标题 ===== -->
+    <header class="app-header">
+      <div class="header-badge">✦ AI 礼物顾问</div>
+      <h1 class="app-title">为 TA 找到<br /><span class="highlight">最戳心的那个礼物</span></h1>
+      <p class="app-subtitle">告诉我关于 TA 的一切，AI 为你量身定制 3 个推荐 🎀</p>
+    </header>
+
+    <!-- ===== 模式切换 Tab ===== -->
+    <div class="mode-tabs" role="tablist" aria-label="输入模式">
+      <button class="mode-tab active" id="tab-form" role="tab" aria-selected="true" aria-controls="panel-form"
+        data-mode="form">
+        <span class="tab-icon">📋</span> 填表模式
+      </button>
+      <button class="mode-tab" id="tab-free" role="tab" aria-selected="false" aria-controls="panel-free"
+        data-mode="free">
+        <span class="tab-icon">✏️</span> 直接说
+      </button>
+    </div>
+
+    <!-- ===== 输入表单卡片 ===== -->
+    <section class="form-card" aria-label="礼物信息填写">
+      <!-- ===== 直接说模式面板 ===== -->
+      <div id="panel-free" class="free-panel" role="tabpanel" aria-labelledby="tab-free" hidden>
+        <p class="free-panel-hint">🎁 告诉我你的情况，我来帮你找到最合适的礼物</p>
+        <ul class="free-panel-tips">
+          <li>你们是什么关系？这次想送什么场合？</li>
+          <li>对方最近在迷什么、平时喜欢什么？</li>
+          <li>大概预算多少？有没有特别想避开的东西？</li>
+          <li>你们之间最近有没有什么特别的事？（吵架和好、异地重逢…都算）</li>
+        </ul>
+        <p class="free-panel-note">👆 参考方向，不用全说，说你知道的就行</p>
+        <textarea class="form-textarea free-textarea" id="free-input" rows="6"
+          placeholder="比如：我想给我女朋友过生日，她喜欢看书和喝咖啡，我们最近刚吵完架和好了，预算大概300块，想送一个有点心意但不会太贵重的东西"
+          aria-label="自由描述你的送礼需求"></textarea>
+        <button class="btn-submit" id="free-submit-btn" type="button" style="margin-top: 16px;">
+          <span class="btn-icon">✨</span>发送，帮我推荐
+        </button>
+      </div>
+
+      <!-- ===== 填表模式面板 ===== -->
+      <div id="panel-form" role="tabpanel" aria-labelledby="tab-form">
+        <p class="section-title">关于 TA</p>
+
+        <div class="form-grid">
+          <!-- 送礼对象 -->
+          <div class="form-group">
+            <label class="form-label" for="relationship">
+              <span class="icon">💝</span> 送礼对象
+            </label>
+            <select class="form-select" id="relationship">
+              <option value="">请选择关系</option>
+              <option value="恋人">恋人</option>
+              <option value="朋友">朋友</option>
+              <option value="父母">父母</option>
+              <option value="同事">同事</option>
+              <option value="其他">其他</option>
+            </select>
+          </div>
+
+          <!-- 对象性格 -->
+          <div class="form-group">
+            <label class="form-label" for="personality">
+              <span class="icon">🌟</span> TA 的性格
+            </label>
+            <select class="form-select" id="personality">
+              <option value="">请选择性格</option>
+              <option value="文艺范">文艺范</option>
+              <option value="运动达人">运动达人</option>
+              <option value="宅家爱好者">宅家爱好者</option>
+              <option value="社交达人">社交达人</option>
+              <option value="实用主义">实用主义</option>
+            </select>
+          </div>
+
+          <!-- 送礼场景 -->
+          <div class="form-group full-width">
+            <label class="form-label" for="occasion">
+              <span class="icon">🎉</span> 送礼场景
+            </label>
+            <select class="form-select" id="occasion">
+              <option value="">请选择场景</option>
+              <option value="生日">🎂 生日</option>
+              <option value="纪念日">💑 纪念日</option>
+              <option value="节日">🎊 节日</option>
+              <option value="日常惊喜">🌷 日常惊喜</option>
+              <option value="其他">✨ 其他</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-divider"></div>
+        <p class="section-title">礼物偏好</p>
+
+        <!-- 礼物类型多选 -->
+        <div class="form-group" style="margin-bottom: 22px;">
+          <label class="form-label">
+            <span class="icon">🎁</span> 礼物类型 <span style="color: var(--text-tertiary); font-weight: 400;">(可多选)</span>
+          </label>
+          <div class="tags-wrapper" role="group" aria-label="礼物类型选择">
+            <div class="tag-pill" data-value="手工制作" role="button" tabindex="0">🎨 手工制作</div>
+            <div class="tag-pill" data-value="贵重礼物" role="button" tabindex="0">💎 贵重礼物</div>
+            <div class="tag-pill" data-value="可爱搞笑" role="button" tabindex="0">😂 可爱搞笑</div>
+            <div class="tag-pill" data-value="实用日常" role="button" tabindex="0">🛒 实用日常</div>
+            <div class="tag-pill" data-value="体验类" role="button" tabindex="0">🌈 体验类</div>
+          </div>
+        </div>
+
+        <!-- 自由补充 -->
+        <div class="form-group" style="margin-bottom: 24px;">
+          <label class="form-label" for="extra-notes">
+            <span class="icon">✏️</span> 补充说明 <span style="color: var(--text-tertiary); font-weight: 400;">(选填)</span>
+          </label>
+          <textarea class="form-textarea" id="extra-notes" placeholder="比如：TA 最近迷上了露营 / 对坚果过敏 / 预算在 300 元以内…"
+            rows="3"></textarea>
+        </div>
+
+        <!-- 提交按钮 -->
+        <button class="btn-submit" id="submit-btn" type="button">
+          <span class="btn-icon">✨</span>获取专属礼物推荐
+        </button>
+      </div><!-- /panel-form -->
+    </section>
+
+    <!-- ===== 对话区域 ===== -->
+    <section class="chat-section" id="chat-section" aria-label="AI 对话区">
+      <div class="chat-container">
+
+        <!-- 对话头部 -->
+        <div class="chat-header">
+          <div class="chat-avatar">🎁</div>
+          <div class="chat-title-group">
+            <div class="chat-name">GiftMuse AI</div>
+            <div class="chat-status">
+              <span class="status-dot"></span>在线，随时为你推荐
+            </div>
+          </div>
+          <span class="chat-history-count" id="history-count">新对话</span>
+          <button class="btn-clear" id="clear-btn" title="清空对话">清空</button>
+        </div>
+
+        <!-- 消息列表 -->
+        <div class="chat-messages" id="chat-messages" role="log" aria-live="polite">
+          <div class="chat-empty">
+            <div class="empty-icon">🎁</div>
+            <div class="empty-title">告诉我你想送谁</div>
+            <div class="empty-desc">填写上方的信息，AI 会为你量身定制礼物推荐 🌸</div>
+          </div>
+        </div>
+
+        <!-- 对话输入区 (首次推荐后显示) -->
+        <div id="chat-input-section" class="chat-input-area">
+          <!-- 快捷短语 -->
+          <div class="quick-prompts">
+            <button class="quick-btn" data-prompt="这些不太适合，有其他方向吗？" type="button">💬 换个方向</button>
+            <button class="quick-btn" data-prompt="预算调整到 200 元以内，重新推荐" type="button">💰 调整预算</button>
+            <button class="quick-btn" data-prompt="有没有可以自己动手做的选项？" type="button">🎨 手工选项</button>
+            <button class="quick-btn" data-prompt="第一个说得更详细一点！" type="button">🔍 展开第一个</button>
+          </div>
+          <div class="chat-input-row">
+            <textarea class="chat-input" id="chat-input" placeholder="继续聊聊… 比如「预算调一下」或「第二个说具体点」" rows="1"
+              aria-label="发送消息"></textarea>
+            <button class="btn-send" id="send-btn" type="button" aria-label="发送">
+              ➤
+            </button>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ===== 页脚 ===== -->
+    <footer class="app-footer">
+      Powered by Gemini AI · 仅供参考，祝送礼顺利 🎀<br />
+      <span style="font-size: 10px; opacity: 0.6;">AI 请求通过后端代理转发，前端不保存 API Key</span>
+    </footer>
+
+  </div>
+
+  <!-- 脚本 -->
+  <script src="config.js"></script>
+  <script src="app.js"></script>
+</body>
+
+</html>

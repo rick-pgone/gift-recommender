@@ -3,6 +3,12 @@
  * 依赖: config.js (CONFIG 对象)
  */
 
+const CONFIG = window.CONFIG;
+
+if (!CONFIG) {
+  throw new Error("Missing CONFIG. Make sure config.js is loaded before app.js.");
+}
+
 // ============================================================
 // 状态管理
 // ============================================================
@@ -87,7 +93,7 @@ function buildUiErrorMessage(error) {
     return `⚠️ ${error.message}\n\n如果你只是想继续测试提示文案，可以明天再试，或者让我临时帮你放宽本地限制。`;
   }
 
-  return `❌ 出了点问题：${error.message}\n\n请检查 API Key 是否正确，或稍后再试。`;
+  return `❌ 出了点问题：${error.message}\n\n请刷新页面后重试；如果还不行，我可以继续帮你排查。`;
 }
 
 // ============================================================

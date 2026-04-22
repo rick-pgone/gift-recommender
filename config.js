@@ -6,7 +6,7 @@
 // 3. 真正的密钥放在服务端环境变量 `GEMINI_API_KEY`
 // ================================================
 
-const CONFIG = {
+window.CONFIG = {
   API_PROXY_PATH: "/api/gemini",
 
   GENERATION_CONFIG: {

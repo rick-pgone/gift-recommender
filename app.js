@@ -93,6 +93,10 @@ function buildUiErrorMessage(error) {
     return `⚠️ ${error.message}\n\n如果你只是想继续测试提示文案，可以明天再试，或者让我临时帮你放宽本地限制。`;
   }
 
+  if (error.message === "Failed to fetch") {
+    return "❌ 网络请求失败了。\n\n这通常是服务刚休眠、网络波动，或者对话内容过长导致请求没有顺利发出去。请稍等几秒再试一次。";
+  }
+
   return `❌ 出了点问题：${error.message}\n\n请刷新页面后重试；如果还不行，我可以继续帮你排查。`;
 }
 

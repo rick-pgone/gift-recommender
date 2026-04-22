@@ -7,6 +7,7 @@ const HOST = "0.0.0.0";
 const PORT = process.env.PORT || 3000;
 const ROOT_DIR = __dirname;
 const GEMINI_ENDPOINT = "https://generativelanguage.googleapis.com/v1beta/models/gemini-3.1-pro-preview:generateContent";
+const MAX_REQUEST_BODY_SIZE = 2 * 1024 * 1024;
 const RATE_LIMITS = {
   dailyRequests: 20,
   dailyRecommendations: 10,
@@ -78,7 +79,7 @@ async function handleGeminiProxy(req, res) {
   let bodyText = "";
   for await (const chunk of req) {
     bodyText += chunk;
-    if (bodyText.length > 100_000) {
+    if (bodyText.length > MAX_REQUEST_BODY_SIZE) {
       sendJson(res, 413, { error: "Request body is too large." });
       return;
     }
